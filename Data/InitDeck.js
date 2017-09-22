@@ -1,181 +1,181 @@
 var deckInit = [
 {
     id : "Dr0",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
    {
     id : "Dr1",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
     {
     id : "Dr2",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
     {
     id : "Dr3",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
        {
     id : "Dr4",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
        {
     id : "Dr5",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
 },
     {
     id : "Dr6",
-    clan: "Dryade",
+    clan: "dryade",
     effet : "Prenez un des membres du village d'un autre joueur et ajoutez le au vôtre."
     },
 
     {
         id :"Gn0",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn1",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn2",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn3",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn4",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn5",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
         {
         id :"Gn6",
-        clan : "Gnome",
+        clan : "gnome",
         effet : "Piochez deux cartes supplémentaires."
     },
 
     {
         id : "Ko0",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko1",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko2",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko3",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko4",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko5",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
         {
         id : "Ko6",
-        clan : "Korrigan",
+        clan : "korrigan",
         effet : "Piochez deux cartes dans la main d'un autre joueur."
     },
 
     {
         id : "Lu0",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu1",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu2",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu3",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu4",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu5",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
         {
         id : "Lu6",
-        clan : "Lutin",
+        clan : "lutin",
         effet : "Echangez votre main avec celle d'un autre joueur."
     },
 
     {
         id : "Fa0",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa1",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa2",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa3",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa4",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa5",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     },
         {
         id : "Fa6",
-        clan : "Farfadet",
+        clan : "farfadet",
         effet : "Echangez votre village avec celui d'un autre joueur."
     }
 ]

@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Fantasy Project</title>
+    <script type="text/javascript" src="js/phaser.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <script src="Data/InitDeck.js"></script>
+    <script type="text/javascript">
+
+
+        var game = new Phaser.Game(720, 720, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+
+        var melangerPaquet = function(paquet){
+            for (var i = paquet.length - 1; i > 0; i--) {
+                var j = Math.floor(Math.random() * (i + 1));
+                var temp = paquet[i];
+                paquet[i] = paquet[j];
+                paquet[j] = temp;
+            }
+            return paquet;
+        }
+
+
+        var deplacerCartes = function(paquetDepart, paquetArrivee, cartes){
+            for(var i in cartes){
+                var carte = cartes[i];
+                var carteTrouvee = false;
+                var cpt = 0;
+                while(carteTrouvee){
+                    if(paquetDepart[cpt] === carte.id){
+                        carteTrouvee = true;
+                        paquetDepart.splice(cpt, 1);
+                        paquetArrivee.push(carte);
+                    }
+                    cpt++;
+                }
+            }
+            return {
+                paquetDepart : paquetDepart,
+                paquetArrivee : paquetArrivee
+            }
+        }
+
+        const deck = {
+            paquet : [],
+            initialisationPaquet: function(deckInit){
+                game.add.sprite(330, 320, 'card_0');
+                for(var i in deckInit) {
+                    var carteJson = deckInit[i];
+                    var nouvelleCarte = {
+                        "clan": carteJson.clan,
+                        "effet": carteJson.effet,
+                        "id" : carteJson.id,
+                        "isHidden": true
+                    };
+                    this.paquet.push(nouvelleCarte);
+                }
+                melangerPaquet(this.paquet);
+            },
+            piocherCartes : function(nombreCartes) {
+                var cartesPiochees = [];
+                if (nombreCartes < this.paquet.length) {
+                    for (var i = 0; i < nombreCartes; i++) {
+                        cartesPiochees.push(this.paquet.pop());
+                    }
+                } else {
+                    cartesPiochees.push(this.paquet);
+                    this.paquet = [];
+                }
+
+                for(var i in cartesPiochees){
+                    cartesPiochees[i].isHidden = false;
+                    switch(cartesPiochees.clan){
+                        case "dryade":
+                            cartesPiochees[i].sprite.loadTexture('card_dryade_0');
+                            break;
+                        case "gnome":
+                            cartesPiochees[i].sprite.loadTexture('card_gnome_0');
+                            break;
+                        case "korrigan":
+                            cartesPiochees[i].sprite.loadTexture('card_korrigan_0');
+                            break;
+                        case "lutin":
+                            cartesPiochees[i].sprite.loadTexture('card_lutin_0');
+                            break;
+                        case "farfadet":
+                            cartesPiochees[i].sprite.loadTexture('card_farfadet_0');
+                            break;
+                    }
+                }
+                return cartesPiochees;
+            }
+        };
+
+        jouerCarte = function () {
+            var carteJouee = joueur1.main[this.indice];
+            joueur1.main.splice(this.indice, 1);
+            joueur1.spritesMain.splice(this.indice, 1);
+            joueur1.ajouterCarteVillage(carteJouee, this.sprite);
+            switch(carteJouee.clan){
+                case "gnome":
+                    appliquerEffetGnome();
+                    break;
+            }
+
+            flagTurnOver = true;
+        }
+
+        // Initialisation des joueurs
+        const joueur1 = {
+            id : "joueur1",
+            village: [],
+            actif : true,
+            main: [],
+            spritesMain : [],
+            spritesVillage : [],
+            initMain : function(){
+                var nouvellesCartes = deck.piocherCartes(5);
+                for(var i in nouvellesCartes){
+                    this.ajoutCarteMain(nouvellesCartes[i]);
+                }
+            },
+            ajoutCarteMain: function(carte){
+                var sprite = game.add.sprite(100 + this.main.length * 85, 628, 'card_' + carte.clan + '_0');
+                sprite.inputEnabled = true;
+                sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                this.spritesMain.push(sprite);
+                this.main.push(carte);
+            },
+
+            ajouterCarteVillage: function(carte, sprite){
+                this.spritesVillage.push(sprite);
+                this.village.push(carte);
+            }
+        };
+
+        const joueur2 = {
+            id: "joueur2",
+            village: [],
+            actif: false,
+            main: [],
+            spritesMain : [],
+            spritesVillage : [],
+            initMain: function () {
+                var nouvellesCartes = deck.piocherCartes(5);
+                for (var i in nouvellesCartes) {
+                    var sprite = game.add.sprite(4, 100 + i * 65, 'card_90');
+                    sprite.inputEnabled = true;
+                    sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                    this.spritesMain.push(sprite);
+                    this.main.push(nouvellesCartes[i]);
+                }
+            },
+            ajoutCarteMain: function(carte){
+                var sprite = game.add.sprite(100 + this.main.length * 85, 628, 'card_' + carte.clan);
+                sprite.inputEnabled = true;
+                sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                this.spritesMain.push(sprite);
+                this.main.push(carte);
+            },
+
+            ajouterCarteVillage: function(carte, sprite){
+                this.spritesVillage.push(sprite);
+                this.village.push(carte);
+            }
+        };
+
+        const joueur3 = {
+            id : "joueur3",
+            village: [],
+            actif: false,
+            main: [],
+            spritesMain : [],
+            spritesVillage : [],
+            initMain: function () {
+                var nouvellesCartes = deck.piocherCartes(5);
+                for (var i in nouvellesCartes) {
+                    var sprite = game.add.sprite(550 - (i * 85), 4, 'card_180');
+                    sprite.inputEnabled = true;
+                    sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                    this.spritesMain.push(sprite);
+                    this.main.push(nouvellesCartes[i]);
+                }
+            },
+            ajoutCarteMain: function(carte){
+                var sprite = game.add.sprite(550 - (this.main.length * 85), 4, 'card_' + carte.clan);
+                sprite.inputEnabled = true;
+                sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                this.spritesMain.push(sprite);
+                this.main.push(carte);
+            },
+
+            ajouterCarteVillage: function(carte, sprite){
+                this.spritesVillage.push(sprite);
+                this.village.push(carte);
+            }
+        };
+
+        const joueur4 = {
+            id : "joueur4",
+            village: [],
+            actif: false,
+            main: [],
+            spritesMain : [],
+            spritesVillage : [],
+            initMain: function () {
+                var nouvellesCartes = deck.piocherCartes(5);
+                for (var i in nouvellesCartes) {
+                    var sprite = game.add.sprite(627, 550 - (i * 85), 'card_270');
+                    sprite.inputEnabled = true;
+                    sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                    this.spritesMain.push(sprite);
+                    this.main.push(nouvellesCartes[i]);
+                }
+            },
+            ajoutCarteMain: function(carte){
+                var sprite = game.add.sprite(627, 550 - (this.main.length * 85), 'card_' + carte.clan);
+                sprite.inputEnabled = true;
+                sprite.events.onInputUp.add(jouerCarte, {'indice' : this.main.length, 'sprite' : sprite} )
+                this.spritesMain.push(sprite);
+                this.main.push(carte);
+            },
+
+            ajouterCarteVillage: function(carte, sprite){
+                this.spritesVillage.push(sprite);
+                this.village.push(carte);
+            }
+        };
+
+        var flagTurnOver = false;
+        var flagEffetDryadeActif = false;
+        var flagEffectKorriganActif = false;
+        var flagEffectLutinActif = false;
+        var flagEffectFarfadetActif = false;
+
+        appliquerEffetGnome = function(){
+            var cartesPiochees = deck.piocherCartes(2);
+            for(var i in cartesPiochees){
+                joueur1.ajoutCarteMain(cartesPiochees[i]);
+            }
+        }
+
+        appliquerEffetDryade = function () {
+            flagEffetDryadeActif = true;
+            while(flagEffetDryadeActif){
+
+            }
+        }
+
+        volerCarteVillage = function () {
+            if (flagEffetDryadeActif) {
+                switch (this.joueur) {
+                    case joueur2.id:
+                        joueur1.village.push(joueur2.village.splice(this.indice, 1));
+                        joueur1.spritesVillage.push(joueur2.spritesVillage.splice(this.indice, 1));
+                    case (joueur3.id):
+                        joueur1.village.push(joueur3.village.splice(this.indice, 1));
+                        joueur1.spritesVillage.push(joueur3.spritesVillage.splice(this.indice, 1));
+                    case (joueur4.id):
+                        joueur1.village.push(joueur4.village.splice(this.indice, 1));
+                        joueur1.spritesVillage.push(joueur4.spritesVillage.splice(this.indice, 1));
+                }
+            }
+            flagEffetDryadeActif = false;
+        }
+
+        refreshSpritesVisibility = function() {
+            for(var i in joueur1.spritesMain){
+                joueur1.spritesMain[i].loadTexture('card_' + joueur1.main[i].clan + '_0');
+            }
+            for(var i in joueur1.spritesVillage){
+                joueur1.spritesVillage[i].loadTexture('card_' + joueur1.village[i].clan + '_0');
+            }
+
+            for(var i in joueur2.spritesMain){
+                joueur2.spritesMain[i].loadTexture('card_' + joueur2.main[i].clan + '_90');
+            }
+            for(var i in joueur2.spritesVillage) {
+                joueur2.spritesVillage[i].loadTexture('card_' + joueur2.village[i].clan + '_90');
+            }
+
+            for(var i in joueur3.spritesMain){
+                joueur3.spritesMain[i].loadTexture('card_' + joueur3.main[i].clan + '_180');
+            }
+            for(var i in joueur3.spritesVillage){
+                joueur3.spritesVillage[i].loadTexture('card_' + joueur3.village[i].clan + '_180');
+            }
+
+            for(var i in joueur4.spritesMain){
+                joueur4.spritesMain[i].loadTexture('card_' + joueur4.main[i].clan + '_270');
+            }
+            for(var i in joueur4.spritesVillage){
+                joueur4.spritesVillage[i].loadTexture('card_' + joueur4.village[i].clan + '_270');
+            }
+        }
+
+        function preload() {
+            game.load.image('blue_hand', 'assets/blue_hand.png');
+            game.load.image('brown_hand', 'assets/brown_hand.png');
+            game.load.image('green_hand', 'assets/green_hand.png');
+            game.load.image('yellow_hand', 'assets/yellow_hand.png');
+            game.load.image('blue_village', 'assets/blue_village.png');
+            game.load.image('brown_village', 'assets/brown_village.png');
+            game.load.image('green_village', 'assets/green_village.png');
+            game.load.image('yellow_village', 'assets/yellow_village.png');
+            game.load.image('deck_zone', 'assets/deck_zone.png');
+            game.load.image('filler', 'assets/filler.png');
+            game.load.image('card_0', 'assets/card_0.png');
+            game.load.image('card_90', 'assets/card_90.png');
+            game.load.image('card_180', 'assets/card_180.png');
+            game.load.image('card_270', 'assets/card_270.png');
+            game.load.image('card_dryade_0', 'assets/card_dryade_0.png');
+            game.load.image('card_dryade_90', 'assets/card_dryade_90.png');
+            game.load.image('card_dryade_180', 'assets/card_dryade_180.png');
+            game.load.image('card_dryade_270', 'assets/card_dryade_270.png');
+            game.load.image('card_gnome_0', 'assets/card_gnome_0.png');
+            game.load.image('card_gnome_90', 'assets/card_gnome_90.png');
+            game.load.image('card_gnome_180', 'assets/card_gnome_180.png');
+            game.load.image('card_gnome_270', 'assets/card_gnome_270.png');
+            game.load.image('card_lutin_0', 'assets/card_lutin_0.png');
+            game.load.image('card_lutin_90', 'assets/card_lutin_90.png');
+            game.load.image('card_lutin_180', 'assets/card_lutin_180.png');
+            game.load.image('card_lutin_270', 'assets/card_lutin_270.png');
+            game.load.image('card_korrigan_0', 'assets/card_korrigan_0.png');
+            game.load.image('card_korrigan_90', 'assets/card_korrigan_90.png');
+            game.load.image('card_korrigan_180', 'assets/card_korrigan_180.png');
+            game.load.image('card_korrigan_270', 'assets/card_korrigan_270.png');
+            game.load.image('card_farfadet_0', 'assets/card_farfadet_0.png');
+            game.load.image('card_farfadet_90', 'assets/card_farfadet_90.png');
+            game.load.image('card_farfadet_180', 'assets/card_farfadet_180.png');
+            game.load.image('card_farfadet_270', 'assets/card_farfadet_270.png');
+        }
+
+        function create() {
+
+            var sprite_green_hand = game.add.sprite(95, 0, 'green_hand');
+            var sprite_blue_hand = game.add.sprite(0, 95, 'blue_hand');
+            var sprite_yellow_hand = game.add.sprite(623, 95, 'yellow_hand');
+            var sprite_brown_hand =  game.add.sprite(95, 623, 'brown_hand');
+            var sprite_green_village = game.add.sprite(95, 95, 'green_village');
+            var sprite_yellow_village = game.add.sprite(479, 95, 'yellow_village');
+            var sprite_blue_village = game.add.sprite(95, 239, 'blue_village');
+            var sprite_brown_village= game.add.sprite(239, 479, 'brown_village');
+            var sprite_deck_zone = game.add.sprite(239, 239, 'deck_zone');
+
+            // Construction du deck
+            deck.initialisationPaquet(deckInit);
+
+            //Initialisation des mains des joueurs
+            joueur1.initMain();
+            joueur2.initMain()
+            joueur3.initMain();
+            joueur4.initMain();
+        }
+
+        function update() {
+
+            if(flagTurnOver){
+                flagTurnOver = false;
+                var mainJoueur1 = joueur1.main;
+                joueur1.main = joueur2.main;
+                joueur2.main = joueur3.main;
+                joueur3.main = joueur4.main;
+                joueur4.main = mainJoueur1;
+
+                var villageJoueur1 = joueur1.village;
+                joueur1.village = joueur2.village;
+                joueur2.village = joueur3.village;
+                joueur3.village = joueur4.village;
+                joueur4.village = villageJoueur1;
+
+                var spritesMainJoueur1 = joueur1.spritesMain;
+                joueur1.spritesMain = joueur2.spritesMain;
+                joueur2.spritesMain = joueur3.spritesMain;
+                joueur3.spritesMain = joueur4.spritesMain;
+                joueur4.spritesMain = spritesMainJoueur1;
+
+                var spritesVillageJoueur1 = joueur1.spritesVillage;
+                joueur1.spritesVillage = joueur2.spritesVillage;
+                joueur2.spritesVillage = joueur3.spritesVillage;
+                joueur3.spritesVillage = joueur4.spritesVillage;
+                joueur4.spritesVillage = spritesVillageJoueur1;
+
+                refreshSpritesVisibility();
+
+            }
+
+            for(var i in joueur1.spritesMain){
+                joueur1.spritesMain[i].x = 100 + i * 65;
+                joueur1.spritesMain[i].y = 628;
+                joueur1.spritesMain[i].events.onInputUp.removeAll();
+                joueur1.spritesMain[i].events.onInputUp.add(jouerCarte, {'indice' : i, 'sprite' : joueur1.spritesMain[i]} );
+            }
+
+            for(var i in joueur1.spritesVillage){
+                joueur1.spritesVillage[i].x = 250 + i * 60;
+                joueur1.spritesVillage[i].y = 483;
+            }
+
+            for(var i in joueur2.spritesMain){
+                joueur2.spritesMain[i].x = 4;
+                joueur2.spritesMain[i].y = 100 + i * 65;
+                joueur2.spritesMain[i].events.onInputUp.removeAll();
+                joueur2.spritesMain[i].events.onInputUp.add(jouerCarte, {'indice' : i, 'sprite' : joueur2.spritesMain[i]} );
+            }
+
+            for(var i in joueur2.spritesVillage){
+                joueur2.spritesVillage[i].x = 148;
+                joueur2.spritesVillage[i].y = 250 + i * 60;
+                if(joueur2.spritesVillage[i].events.length != 0){
+                    joueur2.spritesVillage[i].events.onInputUp.removeAll();
+                }
+                joueur2.spritesVillage[i].events.onInputUp.add(volerCarteVillage, {'indice' : i, 'joueur' : joueur2.id})
+            }
+
+            for(var i in joueur3.spritesMain){
+                joueur3.spritesMain[i].x = 550 - (i * 65);
+                joueur3.spritesMain[i].y = 4;
+                joueur3.spritesMain[i].events.onInputUp.removeAll();
+                joueur3.spritesMain[i].events.onInputUp.add(jouerCarte, {'indice' : i, 'sprite' : joueur3.spritesMain[i]} );
+            }
+
+            for(var i in joueur3.spritesVillage){
+                joueur3.spritesVillage[i].x = 406 - i * 60;
+                joueur3.spritesVillage[i].y = 148;
+                if(joueur3.spritesVillage[i].events.length != 0){
+                    joueur3.spritesVillage[i].events.onInputUp.removeAll();
+                }
+                joueur3.spritesVillage[i].events.onInputUp.add(volerCarteVillage, {'indice' : i, 'joueur' : joueur3.id})
+            }
+
+            for(var i in joueur4.spritesMain){
+                joueur4.spritesMain[i].x = 627;
+                joueur4.spritesMain[i].y = 550 - (i * 65);
+                joueur4.spritesMain[i].events.onInputUp.removeAll();
+                joueur4.spritesMain[i].events.onInputUp.add(jouerCarte, {'indice' : i, 'sprite' : joueur4.spritesMain[i]} );
+            }
+
+            for(var i in joueur4.spritesVillage){
+                joueur4.spritesVillage[i].x = 483;
+                joueur4.spritesVillage[i].y = 406 - (i * 60);
+                if(joueur4.spritesVillage[i].events.length != 0){
+                    joueur4.spritesVillage[i].events.onInputUp.removeAll();
+                }
+                joueur4.spritesVillage[i].events.onInputUp.add(volerCarteVillage, {'indice' : i, 'joueur' : joueur4.id})
+            }
+
+        }
+
+    </script>
+</body>
+</html>
